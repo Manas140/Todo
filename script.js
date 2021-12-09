@@ -1,39 +1,39 @@
 // my words "js sure is hard...."
+document.addEventListener('DOMContentLoaded', getTodo);
 const input = document.querySelector('.todo-input');
 const list = document.querySelector('.todo-list');
 const addButton = document.querySelector('.add-button');
-
 addButton.addEventListener('click', addTodo);
-document.addEventListener('DOMContentLoaded', getTodo);
+
+let Todo;
+if (localStorage.getItem("Todo") === null) {
+  Todo = [];
+} else {
+  Todo = JSON.parse(localStorage.getItem("Todo"));
+}
+
+function createTodo(event) {
+  list.innerHTML += 
+  ` <div class="todo-element">
+      <p class="todo-text">${event}</p>
+      <button class="delete-button">×</button>
+    </div>
+  `;
+  document.querySelectorAll(".delete-button").forEach(function(button) {
+    button.addEventListener('click', delTodo);  
+  })
+  document.querySelectorAll(".todo-element").forEach(function(div) {
+    div.addEventListener('click', doneTodo);  
+  })
+}
 
 function addTodo(event) {
   event.preventDefault();
   if (input.value != "") {
     event.preventDefault();
-    const div = document.createElement("div");
-    div.classList.add("todo-element")
-    list.appendChild(div);
-   
-    const text = document.createElement('p');
-    text.innerText = input.value;
-    text.classList.add("todo-text");
-    div.appendChild(text);
-    
-    // const doneButton = document.createElement('button');
-    // doneButton.innerText = '✓';
-    // doneButton.classList.add("done-button");
-    // div.appendChild(doneButton);
-    // doneButton.addEventListener('click', doneTodo);
-    
-    const delButton = document.createElement('button');
-    delButton.innerText = '×';
-    delButton.classList.add("delete-button");
-    div.appendChild(delButton);
-    delButton.addEventListener('click', delTodo);
+    createTodo(input.value);
     saveTodo(input.value);
     input.value = "";
-  } else {
-    console.log("please enter a value");
   }
 }
 
@@ -47,59 +47,22 @@ function delTodo(event) {
 function doneTodo(event){
   event.preventDefault();
   todo = event.target.parentElement; 
+  // removeTodo(todo);
   todo.classList.toggle('done');
 }
 
 function saveTodo(todo) {
-  let todos;
-  if (localStorage.getItem('todos') === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
-  todos.push(todo);
-  localStorage.setItem('todos',JSON.stringify(todos));
+  Todo.push(todo);
+  localStorage.setItem('Todo',JSON.stringify(Todo));
 }
 
 function getTodo() {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
-  todos.forEach(function(todo) {
-    const div = document.createElement("div");
-    div.classList.add("todo-element")
-    list.appendChild(div);
-     
-    const text = document.createElement('p');
-    text.innerText = todo;
-    text.classList.add("todo-text");
-    div.appendChild(text);
-    
-    // const doneButton = document.createElement('button');
-    // doneButton.innerText = '✓';
-    // doneButton.classList.add("done-button");
-    // div.appendChild(doneButton);
-    // doneButton.addEventListener('click', doneTodo);
-    
-    const delButton = document.createElement('button');
-    delButton.innerText = '×';
-    delButton.classList.add("delete-button");
-    div.appendChild(delButton);
-    delButton.addEventListener('click', delTodo);
+  Todo.forEach(function(todo) {
+    createTodo(todo);
   })
 }
 
 function removeTodo(todo) {
-  let todos;
-  if (localStorage.getItem("todos") === null) {
-    todos = [];
-  } else {
-    todos = JSON.parse(localStorage.getItem("todos"));
-  }
-  console.log(todos.indexOf(todo.children[0].innerText));
-  todos.splice(todos.indexOf(todo.children[0].innerText), 1);
-  localStorage.setItem('todos',JSON.stringify(todos));
+  Todo.splice(Todo.indexOf(todo.children[0].innerText), 1);
+  localStorage.setItem('Todo',JSON.stringify(Todo));
 }
