@@ -2,72 +2,46 @@
   font-family: Font;
   src: url("./Font.ttf");
 }
-:root{
-  --bg: #101010;
-  --al: #151515;
+:root {
+  --bg: #151515;
+  --al: #0f0f0f;
   --fg: #E8E3E3;
-  --pr: #8C977D;
-  --dl: #B66467;
-  --dn: #D9BC8C;
+  
+  /* light version */
+  /* --bg: #E8E3E3; */
+  /* --al: #d0cccc; */
+  /* --fg: #424242; */
 }
-*{
+* {
   margin: 0;
   text-decoration: none;
-  border-radius: 0.5em;
   transition: 0.5s ease;
-  font-family: Font ,sans-serif;
+  font-family: Font, sans-serif;
   text-align: center;
-  color: var(--pr);
   font-size: 1em;
-  outline: 0;
+  color: var(--fg);  
 }
-body{
-  background-color: var(--bg);
-  padding: 5em 10em;
-  display: grid;
-  grid-gap: 2em;
-}
-div, form{
+body {
+  padding: 1em;
   background-color: var(--al);
+}
+form, .todo-element {
   display: grid;
-  grid-gap: 0.5em;
-  padding: 0.5em;
-  min-height: 2em;
-  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.75);
-}
-.todo-element{
   grid-template-columns: 1fr 0.05fr;
-  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.75);
-  padding: 0;
 }
-p{
-  background-color: var(--bg);
+button, input, p {
   padding: 1em;
-  word-break: break-all;
-}
-button, input{
-  padding: 1em;
-  color: var(--fg);
   background-color: var(--bg);
   border: none;
+  outline: none;
 }
-.add-button{
-  display: none;
+p {
+  word-break: break-all;
 }
-input:focus{
-  color: var(--bg);
-  background-color: var(--pr);
+button:hover, button:focus, a:hover {
+  opacity: 0.5;
 }
-button:hover, button:focus{
-  background-color: var(--dl);
-}
-.done{
+.done {
   text-decoration: line-through;
   opacity: 0.5;
 }
-@media only screen and (max-width: 800px) {
-  body{
-    padding: 1em 2em;
-  }
-}
-
