@@ -1,5 +1,5 @@
 // my words "js sure is hard...."
-document.addEventListener('DOMContentLoaded', getTodo);
+document.addEventListener('DOMContentLoaded', load);
 const input = document.querySelector('.todo-input');
 const list = document.querySelector('.todo-list');
 const addButton = document.querySelector('.add-button');
@@ -47,7 +47,6 @@ function delTodo(event) {
 function doneTodo(event){
   event.preventDefault();
   todo = event.target.parentElement; 
-  // removeTodo(todo);
   todo.classList.toggle('done');
 }
 
@@ -56,7 +55,7 @@ function saveTodo(todo) {
   localStorage.setItem('Todo',JSON.stringify(Todo));
 }
 
-function getTodo() {
+function load() {
   Todo.forEach(function(todo) {
     createTodo(todo);
   })
