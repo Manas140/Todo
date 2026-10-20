@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Todo</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
   </head>
   <body>
-    <form>
-      <input type="text" class="todo-input" name="" value="">
-      <button type="submit" class="add-button">+</button>
-    </form>
-    <div class="todo-list">
-    </div>
-    <script src="./script.js"></script>
+    <main>
+      <header>
+        <button class="filter is-active" data-filter="all">All</button>
+        <button class="filter" data-filter="active">Active</button>
+        <button class="filter" data-filter="done">Done</button>
+      </header>
+
+      <form id="form" autocomplete="off">
+        <input
+          id="input"
+          type="text"
+          placeholder="To do or not to do is the question."
+          maxlength="200"
+        />
+        <button type="submit">+</button>
+      </form>
+      <ul id="list" />
+    </main>
   </body>
 </html>

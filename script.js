@@ -1,67 +1,105 @@
-// my words "js sure is hard...."
-document.addEventListener('DOMContentLoaded', load);
-const input = document.querySelector('.todo-input');
-const list = document.querySelector('.todo-list');
-const addButton = document.querySelector('.add-button');
-addButton.addEventListener('click', addTodo);
+let data = load();
 
-let Todo;
-if (localStorage.getItem("Todo") === null) {
-  Todo = [];
-} else {
-  Todo = JSON.parse(localStorage.getItem("Todo"));
-}
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const list = document.getElementById("list");
+const filters = document.querySelectorAll(".filter");
 
-function createTodo(event) {
-  list.innerHTML += 
-  ` <div class="todo-element">
-      <p class="todo-text">${event}</p>
-      <button class="delete-button">×</button>
-    </div>
-  `;
-  document.querySelectorAll(".delete-button").forEach(function(button) {
-    button.addEventListener('click', delTodo);  
-  })
-  document.querySelectorAll(".todo-element").forEach(function(div) {
-    div.addEventListener('click', doneTodo);  
-  })
-}
+function load() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem("todo"));
+    return {
+      todos: (parsed.todos || [])
+        .filter((t) => t && typeof t.text === "string")
+        .map((t) => ({ text: t.text, done: Boolean(t.done) })),
 
-function addTodo(event) {
-  event.preventDefault();
-  if (input.value != "") {
-    event.preventDefault();
-    createTodo(input.value);
-    saveTodo(input.value);
-    input.value = "";
+      // failsafe
+      filter: ["all", "active", "done"].includes(parsed.filter)
+        ? parsed.filter
+        : "all",
+    };
+  } catch {
+    return { todos: [], filter: "all" };
   }
 }
 
-function delTodo(event) {
-  event.preventDefault();
-  todo = event.target.parentElement; 
-  removeTodo(todo);
-  list.removeChild(event.target.parentElement);
+function save() {
+  localStorage.setItem("todo", JSON.stringify(data));
 }
 
-function doneTodo(event){
-  event.preventDefault();
-  todo = event.target.parentElement; 
-  todo.classList.toggle('done');
+function render() {
+  list.innerHTML = "";
+
+  const shown = data.todos
+    .map((todo, index) => ({ todo, index }))
+    .filter(({ todo }) =>
+      data.filter === "active" ? !todo.done :
+      data.filter === "done" ? todo.done :
+      true
+    );
+
+  if (shown.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "empty";
+    empty.textContent =
+      data.todos.length === 0 ? "You haven't added any todos yet," : "No todo here.";
+    list.appendChild(empty);
+  }
+
+  shown.forEach(({ todo, index }) => list.appendChild(renderItem(todo, index)));
+
+  filters.forEach((btn) =>
+    btn.classList.toggle("is-active", btn.dataset.filter === data.filter)
+  );
 }
 
-function saveTodo(todo) {
-  Todo.push(todo);
-  localStorage.setItem('Todo',JSON.stringify(Todo));
+function renderItem(todo, index) {
+  const li = document.createElement("li");
+  li.className = "item" + (todo.done ? " is-done" : "");
+
+  const text = document.createElement("p");
+  text.className = "itemText";
+  text.textContent = todo.text;
+  li.appendChild(text);
+
+  const del = document.createElement("button");
+  del.className = "deleteBtn";
+  del.type = "button";
+  del.textContent = "-";
+  del.addEventListener("click", (e) => {
+    e.preventDefault();
+    data.todos.splice(index, 1);
+    save();
+    render();
+  });
+  li.appendChild(del);
+
+  li.addEventListener("click", () => {
+    todo.done = !todo.done;
+    save();
+    render();
+  });
+
+  return li;
 }
 
-function load() {
-  Todo.forEach(function(todo) {
-    createTodo(todo);
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const value = input.value.trim();
+  if (!value) return;
+  data.todos.push({ text: value, done: false });
+  save();
+  render();
+  input.value = "";
+  input.focus();
+});
+
+filters.forEach((btn) =>
+  btn.addEventListener("click", () => {
+    data.filter = btn.dataset.filter;
+    save();
+    render();
   })
-}
+);
 
-function removeTodo(todo) {
-  Todo.splice(Todo.indexOf(todo.children[0].innerText), 1);
-  localStorage.setItem('Todo',JSON.stringify(Todo));
-}
+render();
